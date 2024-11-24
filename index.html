@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses and Income</title>
+    <style>
+        /* Estilos gerais para o layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: #2c2c2c;
+            color: #f4f4f9;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        td[contenteditable="true"] {
+            background-color: #fafafa;
+            border: 1px solid #ccc;
+        }
+
+        .button-container {
+            margin: 10px 0;
+            text-align: right;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .month-display {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .month-display p {
+            margin: 5px 0;
+        }
+
+        .month-display strong {
+            color: #007bff;
+        }
+
+        .table-summary {
+            background-color: #f8f9fa;
+            margin-top: 20px;
+        }
+
+        .table-summary td {
+            font-weight: bold;
+        }
+
+        .dark-mode button {
+            background-color: #444;
+            color: #fff;
+        }
+
+        .dark-mode button:hover {
+            background-color: #555;
+        }
+
+        .dark-mode table th,
+        .dark-mode table td {
+            color: #f4f4f9;
+            border-color: #444;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .month-display p {
+                font-size: 14px;
+                word-wrap: break-word;
+            }
+
+            button {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+
+            .month-display {
+                margin: 10px 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .month-display p {
+                font-size: 12px;
+            }
+
+            .month-display button {
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+        }
+    </style>
+    <script>
+        // Variáveis de tradução
+        const translations = {
+            en: {
+                monthCurrent: 'Current Month',
+                nextMonth: 'Next Month',
+                fixedExpenses: 'Fixed Expenses',
+                variableExpenses: 'Variable Expenses',
+                totalExpenses: 'Total Expenses',
+                remainingBalance: 'Remaining Balance',
+                addLine: 'Add Line to Fixed Expenses',
+                addVariableLine: 'Add Line to Variable Expenses',
+                noVariableExpenses: 'No variable expenses recorded',
+                totalFixedExpenses: 'Total Fixed Expenses',
+                totalVariableExpenses: 'Total Variable Expenses',
+                total: 'Total',
+                income: 'Income',
+                addIncomeLine: 'Add Line to Income',
+                noIncomeRecorded: 'No income recorded',
+                totalIncome: 'Total Income',
+            },
+            pt: {
+                monthCurrent: 'Mês Atual',
+                nextMonth: 'Próximo Mês',
+                fixedExpenses: 'Despesas Fixas',
+                variableExpenses: 'Despesas Variáveis',
+                totalExpenses: 'Total Despesas',
+                remainingBalance: 'Saldo Restante',
+                addLine: 'Adicionar Linha em Despesas Fixas',
+                addVariableLine: 'Adicionar Linha em Despesas Variáveis',
+                noVariableExpenses: 'Nenhuma despesa variável registrada',
+                totalFixedExpenses: 'Total de Despesas Fixas',
+                totalVariableExpenses: 'Total de Despesas Variáveis',
+                total: 'Total',
+                income: 'Renda',
+                addIncomeLine: 'Adicionar Linha em Renda',
+                noIncomeRecorded: 'Nenhuma renda registrada',
+                totalIncome: 'Total de Renda',
+            }
+        };
+
+        // Alternar entre inglês e português
+        function changeLanguage(lang) {
+            document.getElementById('mesAtual').textContent = translations[lang].monthCurrent;
+            document.getElementById('proximoMes').textContent = translations[lang].nextMonth;
+            document.querySelector('th[colspan="4"]:nth-of-type(1)').textContent = translations[lang].fixedExpenses;
+            document.querySelector('th[colspan="4"]:nth-of-type(2)').textContent = translations[lang].variableExpenses;
+            document.querySelector('th[colspan="4"]:nth-of-type(3)').textContent = translations[lang].income;
+            document.querySelector('td').innerText = translations[lang].totalExpenses;
+            document.querySelector('.remaining-balance').innerText = translations[lang].remainingBalance;
+            document.querySelector('.button-container button:nth-of-type(1)').innerText = translations[lang].addLine;
+            document.querySelector('.button-container button:nth-of-type(2)').innerText = translations[lang].addVariableLine;
+            document.querySelector('.button-container button:nth-of-type(3)').innerText = translations[lang].addIncomeLine;
+        }
+
+        // Alternar o modo escuro
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // Funções existentes
+        function adicionarLinha(tbodyId) {
+            const tbody = document.getElementById(tbodyId);
+            const novaLinha = document.createElement('tr');
+
+            for (let i = 0; i < 4; i++) {
+                const novaCelula = document.createElement('td');
+                if (i === 0 || i === 2) {
+                    novaCelula.contentEditable = true;
+                } else if (i === 1) {
+                    novaCelula.innerHTML = "R$ 0,00";
+                    novaCelula.contentEditable = true;
+                } else {
+                    novaCelula.innerHTML = "";
+                    novaCelula.contentEditable = true;
+                }
+                novaLinha.appendChild(novaCelula);
+            }
+
+            tbody.appendChild(novaLinha);
+        }
+
+        function editarLinha(event) {
+            const td = event.target;
+            td.contentEditable = true;
+        }
+
+        function salvarLinha() {
+            const rows = document.querySelectorAll('td[contenteditable="true"]');
+            rows.forEach(cell => {
+                cell.contentEditable = false;
+            });
+        }
+
+        function obterMesAtual() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long' };
+            return new Intl.DateTimeFormat('pt-BR', options).format(now);
+        }
+
+        function obterProximoMes() {
+            const now = new Date();
+            now.setMonth(now.getMonth() + 1);
+            const options = { year: 'numeric', month: 'long' };
+            return new Intl.DateTimeFormat('pt-BR', options).format(now);
+        }
+
+        function navegarMes(direcao) {
+            const currentMonth = new Date();
+            currentMonth.setMonth(currentMonth.getMonth() + direcao);
+            document.getElementById('mesAtual').textContent = obterMesAtual(currentMonth);
+            document.getElementById('proximoMes').textContent = obterProximoMes(currentMonth);
+        }
+
+        // Inicializando a página
+        window.onload = function() {
+            changeLanguage('en'); // Iniciar com inglês
+            document.getElementById('mesAtual').textContent = obterMesAtual();
+            document.getElementById('proximoMes').textContent = obterProximoMes();
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Controle de idiomas -->
+        <div class="button-container">
+            <button onclick="changeLanguage('pt')">Português</button>
+            <button onclick="changeLanguage('en')">English</button>
+        </div>
+
+        <!-- Modo escuro -->
+        <div class="button-container">
+            <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        </div>
+
+        <!-- Exibição do mês -->
+        <div class="month-display">
+            <p id="mesAtual"></p>
+            <p id="proximoMes"></p>
+            <div>
+                <button onclick="navegarMes(-1)">Anterior</button>
+                <button onclick="navegarMes(1)">Próximo</button>
+            </div>
+        </div>
+
+        <!-- Renda -->
+        <div class="button-container">
+            <button onclick="adicionarLinha('renda')">Adicionar Linha em Renda</button>
+        </div>
+        <table id="renda">
+            <caption>Renda</caption>
+            <thead>
+                <tr>
+                    <th colspan="4">Renda</th>
+                </tr>
+                <tr>
+                    <th>Fonte</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Observações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td contenteditable="true">Salário</td>
+                    <td contenteditable="true">R$ 3.000,00</td>
+                    <td contenteditable="true">01/12/2024</td>
+                    <td contenteditable="true"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Despesas fixas -->
+        <div class="button-container">
+            <button onclick="adicionarLinha('despesas-fixas')">Adicionar Linha em Despesas Fixas</button>
+        </div>
+        <table id="despesas-fixas">
+            <caption>Despesas Fixas</caption>
+            <thead>
+                <tr>
+                    <th colspan="4">Despesas Fixas</th>
+                </tr>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Observações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td contenteditable="true">Aluguel</td>
+                    <td contenteditable="true">R$ 1.200,00</td>
+                    <td contenteditable="true">01/12/2024</td>
+                    <td contenteditable="true"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Despesas variáveis -->
+        <div class="button-container">
+            <button onclick="adicionarLinha('despesas-variaveis')">Adicionar Linha em Despesas Variáveis</button>
+        </div>
+        <table id="despesas-variaveis">
+            <caption>Despesas Variáveis</caption>
+            <thead>
+                <tr>
+                    <th colspan="4">Despesas Variáveis</th>
+                </tr>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Observações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td contenteditable="true">Internet</td>
+                    <td contenteditable="true">R$ 100,00</td>
+                    <td contenteditable="true">10/12/2024</td>
+                    <td contenteditable="true"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Resumo -->
+        <table class="table-summary">
+            <tr>
+                <td>Total de Despesas Fixas</td>
+                <td>R$ 1.200,00</td>
+            </tr>
+            <tr>
+                <td>Total de Despesas Variáveis</td>
+                <td>R$ 100,00</td>
+            </tr>
+            <tr>
+                <td>Total de Renda</td>
+                <td>R$ 3.000,00</td>
+            </tr>
+            <tr>
+                <td>Saldo Restante</td>
+                <td>R$ 1.700,00</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
