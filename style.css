@@ -239,3 +239,65 @@ th {
         font-size: 0.9rem;
     }
 }
+.styled-month {
+    font-family: 'Pacifico', cursive; /* Letra de mão (use Google Fonts) */
+    font-size: 3rem;                 /* Tamanho grande */
+    text-align: center;              /* Centralizado */
+    color: #333;                     /* Cor do texto */
+    margin: 10px 0;                  /* Margens */
+}
+/* Modo escuro */
+body.dark-mode th,
+body.dark-mode td{
+    color: black; /* Texto das células preto */
+}
+
+body.dark-mode .container,
+body.dark-mode input, 
+body.dark-mode textarea, 
+body.dark-mode select {
+    background-color: black; /* Fundo de inputs preto */
+    color: black; /* Texto de inputs preto */
+    border: 1px solid black; /* Bordas pretas */
+}
+
+
+body.dark-mode caption
+{
+    color: #fafafa;
+}
+
+body.dark-mode .styled-month{
+    color: #ff077b;
+}
+
+
+
+
+.header {
+    
+    justify-content: space-between; /* Espaçamento automático entre elementos */
+    align-items: center;           /* Alinha verticalmente */
+    padding: 10px 20px;            /* Espaçamento interno */
+}
+
+/* Estilo do container de botões */
+.button-container {
+    display: flex;
+    gap: 10px; /* Espaçamento entre os botões */
+}
+
+/* Estilo dos botões */
+.button-container button {
+    padding: 8px 15px; /* Tamanho interno dos botões */
+    font-size: 1rem;   /* Tamanho da fonte */
+    border: none;      /* Remove borda */
+    border-radius: 5px; /* Borda arredondada */
+    cursor: pointer;   /* Cursor de clique */
+    transition: background-color 0.3s; /* Animação de cor */
+}
+
+.button-container button:hover {
+    background-color: #8a8888; /* Cor ao passar o mouse */
+}
+

@@ -4,25 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expenses and Income</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="index.js"></script>
 </head>
 <body>
     <div class="container">
         <!-- Seletor de idioma -->
-        <div class="button-container">
-            <button onclick="changeLanguage('pt')" aria-label="Alterar idioma para Português">Português</button>
-            <button onclick="changeLanguage('en')" aria-label="Alterar idioma para Inglês">English</button>
-            <button onclick="toggleDarkMode()" aria-label="Alternar entre modo claro e escuro">Toggle Dark Mode</button>
-        </div>
+        <header class="header">
+            <div class="button-container">
+                <button onclick="changeLanguage('pt')" aria-label="Alterar idioma para Português">Português</button>
+                <button onclick="changeLanguage('en')" aria-label="Alterar idioma para Inglês">English</button>
+                <button onclick="toggleDarkMode()" aria-label="Alternar entre modo claro e escuro">Toggle Dark Mode</button>
+            </div>
+        </header>
 
         <!-- Navegação de meses -->
         <div class="month-display">
-            <p id="mesAtual"></p>
-            <p id="proximoMes"></p>
-            <div class="month-navigation">
-                <button onclick="navegarMes(-1)" aria-label="Navegar para o mês anterior">Anterior</button>
-                <button onclick="navegarMes(1)" aria-label="Navegar para o próximo mês">Próximo</button>
+            <p id="mesAtual" class="styled-month"></p>
+            <div>
+                <button onclick="navegarMes(-1)">Anterior</button>
+                <button onclick="navegarMes(1)">Próximo</button>
             </div>
         </div>
 

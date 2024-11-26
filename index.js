@@ -133,3 +133,11 @@ window.onload = function () {
     document.getElementById('mesAtual').textContent = obterMesAtual();
     document.getElementById('proximoMes').textContent = obterProximoMes();
 };
+function obterMesAtual(date = new Date()) {
+    return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+}
+
+function obterProximoMes(date = new Date()) {
+    date.setMonth(date.getMonth() + 1);
+    return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+}
